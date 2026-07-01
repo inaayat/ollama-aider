@@ -33,6 +33,8 @@ Then reload your shell:
 source ~/.zshrc
 ```
 
+After reloading, type `ollama-aider` from any terminal to get started.
+
 > **New to this?** Follow the step-by-step instructions below instead — they walk you through installing the prerequisites first.
 
 ---
@@ -104,9 +106,11 @@ source ~/.zshrc
 
 4. Launch Aider:
    ```bash
-   aider-local
+   ollama-aider
    ```
-   The launcher will load your saved instructions, connect to Ollama, and enter an interactive chat session.
+   If you are already inside a project folder, Aider launches immediately. If not, you will see a menu to pick a project — just type the number and press Enter.
+
+   You can also use `aider-local` directly if you prefer to navigate to the project folder yourself first.
 
 5. Type prompts to edit code. Aider will read files, propose changes, and apply them.
 

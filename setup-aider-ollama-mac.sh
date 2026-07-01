@@ -203,6 +203,67 @@ LAUNCHER_SCRIPT
 chmod +x "$LAUNCHER"
 print_ok "Launcher created at $LAUNCHER"
 
+# ─── Step 6b: Create ollama-aider interactive launcher ────────────────────
+
+cat > "$BIN_DIR/ollama-aider" <<'OLLAMA_AIDER_SCRIPT'
+#!/bin/zsh
+# ollama-aider — smart launcher: auto-detects project or shows menu
+
+PROJECTS_DIR="$HOME/Local-Projects"
+EXCLUDE_DIRS=("Archive" "bin" "aider-env")
+
+is_project() {
+  local dir="${1:-.}"
+  [ -d "$dir/.git" ] && return 0
+  [ -f "$dir/package.json" ] && return 0
+  [ -f "$dir/main.py" ] && return 0
+  [ -f "$dir/README.md" ] && return 0
+  [ -f "$dir/Makefile" ] && return 0
+  [ -f "$dir/pyproject.toml" ] && return 0
+  return 1
+}
+
+launch_aider() {
+  cd "$1" || exit 1
+  source "$PROJECTS_DIR/bin/aider-local" "${@:2}"
+}
+
+if is_project "." && [[ "$PWD" != "$HOME" ]]; then
+  launch_aider "$PWD" "$@"
+  exit 0
+fi
+
+echo ""
+echo "  Pick a project:"
+echo ""
+projects=()
+while IFS= read -r dir; do
+  name=$(basename "$dir")
+  skip=0
+  for ex in "${EXCLUDE_DIRS[@]}"; do [[ "$name" == "$ex" ]] && skip=1; done
+  [[ "$name" == .* ]] && skip=1
+  [ $skip -eq 0 ] && projects+=("$dir")
+done < <(find "$PROJECTS_DIR" -maxdepth 1 -mindepth 1 -type d | sort)
+
+for i in "${!projects[@]}"; do
+  printf "  %2d) %s\n" "$((i+1))" "$(basename "${projects[$i]}")"
+done
+echo ""
+printf "  %2d) Cancel\n" "$(( ${#projects[@]} + 1 ))"
+echo ""
+printf "  Enter number: "
+read -r choice
+
+[[ "$choice" =~ ^[0-9]+$ ]] || { echo "Invalid input."; exit 1; }
+[ "$choice" -eq "$(( ${#projects[@]} + 1 ))" ] && { echo "Cancelled."; exit 0; }
+( [ "$choice" -lt 1 ] || [ "$choice" -gt "${#projects[@]}" ] ) && { echo "Invalid selection."; exit 1; }
+
+launch_aider "${projects[$((choice-1))]}" "$@"
+OLLAMA_AIDER_SCRIPT
+
+chmod +x "$BIN_DIR/ollama-aider"
+print_ok "Interactive launcher created at $BIN_DIR/ollama-aider"
+
 # ─── Step 7: Shell integration ────────────────────────────────────────────
 
 print_header "Shell integration"
@@ -216,6 +277,7 @@ if ! grep -q 'aider-local' "$ZSHRC" 2>/dev/null; then
   echo "# Aider + Ollama" >> "$ZSHRC"
   echo "$PATH_LINE" >> "$ZSHRC"
   echo "$ALIAS_LINE" >> "$ZSHRC"
+  echo 'alias ollama-aider="$HOME/Local-Projects/bin/ollama-aider"' >> "$ZSHRC"
   print_ok "Added alias to $ZSHRC"
 else
   print_ok "Alias already present in $ZSHRC"
