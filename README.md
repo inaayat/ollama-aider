@@ -116,13 +116,14 @@ source ~/.zshrc
 
 ```
 ~/
-├── aider-env/                    # Python virtual environment (created by installer)
+├── Local-Projects/               # All your active projects
+│   ├── aider-env/               # Python virtual environment (created by installer)
+│   └── bin/
+│       └── aider-local          # Global launcher script
 ├── .aider/
 │   ├── AIDER_INSTRUCTIONS.md     # System instructions for Aider behavior
 │   └── config.json               # Stores your selected model
-├── bin/
-│   └── aider-local               # Global launcher script
-└── Projects/                     # Your code projects live here
+└── GitHub-Clones/               # All cloned GitHub repositories
 ```
 
 ## Choosing a Model

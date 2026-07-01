@@ -3,9 +3,9 @@
 
 set -e
 
-VENV_DIR="$HOME/aider-env"
+VENV_DIR="$HOME/Local-Projects/aider-env"
 AIDER_CONFIG_DIR="$HOME/.aider"
-BIN_DIR="$HOME/bin"
+BIN_DIR="$HOME/Local-Projects/bin"
 CONFIG_FILE="$AIDER_CONFIG_DIR/config.json"
 INSTRUCTIONS_FILE="$AIDER_CONFIG_DIR/AIDER_INSTRUCTIONS.md"
 LAUNCHER="$BIN_DIR/aider-local"
@@ -208,8 +208,8 @@ print_ok "Launcher created at $LAUNCHER"
 print_header "Shell integration"
 
 ZSHRC="$HOME/.zshrc"
-ALIAS_LINE='alias aider-local="$HOME/bin/aider-local"'
-PATH_LINE='export PATH="$HOME/bin:$PATH"'
+ALIAS_LINE='alias aider-local="$HOME/Local-Projects/bin/aider-local"'
+PATH_LINE='export PATH="$HOME/Local-Projects/bin:$PATH"'
 
 if ! grep -q 'aider-local' "$ZSHRC" 2>/dev/null; then
   echo "" >> "$ZSHRC"
